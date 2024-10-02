@@ -100,14 +100,10 @@ def find_path_length(
     if type(alg) is tuple:
         alg1, alg2 = alg
 
-    from_d = layer.graph.nodes[from_node]
-    to_d = layer.graph.nodes[to_node]
-
-    from_cluster = from_d['cluster']
-    to_cluster = to_d['cluster']
+    from_cluster = layer.graph.nodes[from_node]['cluster']
+    to_cluster = layer.graph.nodes[to_node]['cluster']
 
     def h(a, b):
-        # print(a, b)
         da = layer.graph.nodes[a]
         db = layer.graph.nodes[b]
         return ((da['x'] - db['x']) ** 2 + (da['y'] - db['y']) ** 2) ** 0.5 / 360 * 2 * np.pi * 6371.01 * 1000
@@ -185,6 +181,35 @@ def find_path_length(
         print('No path in cluster subgraph')
         return -1, 0, 0, 0
 
+
+def find_path_length_h(
+        layer: GraphLayer,
+        from_node: int,
+        to_node: int) -> float:
+    from_cluster = layer.graph.nodes[from_node]['cluster']
+    to_cluster = layer.graph.nodes[to_node]['cluster']
+    def h(a, b):
+        da = layer.graph.nodes[a]
+        db = layer.graph.nodes[b]
+        return ((da['x'] - db['x']) ** 2 + (da['y'] - db['y']) ** 2) ** 0.5 / 360 * 2 * np.pi * 6371.01 * 1000
+
+    g = layer.centroids_graph
+    path = nx.astar_path(g, from_cluster, to_cluster, heuristic=h, weight='length')
+
+    cls = set()
+    cls.add(to_cluster)
+    for i in range(len(path) - 1):
+        u = path[i]
+        v = path[i + 1]
+        cu = layer.graph.nodes[u]['cluster']
+        cv = layer.graph.nodes[v]['cluster']
+        cls.union(layer.cls[cu][cv])
+        cls.add(cu)
+        cls.add(cv)
+
+    g = extract_cluster_list_subgraph(layer.graph, cls, layer.communities)
+    path = nx.single_source_dijkstra(g, from_node, to_node, weight='length')[0]
+    return path
 
 def find_path_length_full(
         layer: GraphLayer,

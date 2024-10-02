@@ -88,8 +88,9 @@ def calculate(data):
     #                          city,
     #                          points=points, logs=True)
     usual_results = graph_tests.get_usual_result(Q, points, alg='dijkstra')
-
-    for m in tqdm([clustering.Method.LOUVAIN,clustering.Method.LOUVAIN_K_MEANS, clustering.Method.BISECTING_K_MEAN, clustering.Method.K_MEAN, clustering.Method.GREEDY_MODULARITY], position=2):
+    methods = [clustering.Method.LOUVAIN, clustering.Method.LOUVAIN_K_MEANS, clustering.Method.BISECTING_K_MEAN,
+               clustering.Method.K_MEAN, clustering.Method.GREEDY_MODULARITY]
+    for m in tqdm([clustering.Method.LOUVAIN], position=2):
         graph_tests.test_graph(Q,
                                name=f'{city}',
                                city_id=city_id,
@@ -109,22 +110,22 @@ if __name__ == '__main__':
     # print('POINTS:', points_number)
 
     cities = {
-        'ASHA': 'R13470549',
-        'KRG': 'R4676636',
-        'EKB': 'R6564910',
-        'BARCELONA': 'R347950',
-        'PARIS': 'R71525',
-        'Prague': 'R435514',
+        # 'ASHA': 'R13470549',
+        # 'KRG': 'R4676636',
+        # 'EKB': 'R6564910',
+        # 'BARCELONA': 'R347950',
+        # 'PARIS': 'R71525',
+        # 'Prague': 'R435514',
         'MSK': 'R2555133',
-        'SBP': 'R337422',
-        'SINGAPORE': 'R17140517',
-        'BERLIN': 'R62422',
-        'ROME': 'R41485',
-        'LA': 'R207359',
-        'DUBAI': 'R4479752',
-        'RIO': 'R2697338',
-        'DELHI': 'R1942586',
-        'KAIR': 'R5466227'
+        # 'SBP': 'R337422',
+        # 'SINGAPORE': 'R17140517',
+        # 'BERLIN': 'R62422',
+        # 'ROME': 'R41485',
+        # 'LA': 'R207359',
+        # 'DUBAI': 'R4479752',
+        # 'RIO': 'R2697338',
+        # 'DELHI': 'R1942586',
+        # 'KAIR': 'R5466227'
     }
 
     # cities = {'R1312868': 'R1312868', 'R1418311': 'R1418311', 'R3377820': 'R3377820', 'R963764': 'R963764',

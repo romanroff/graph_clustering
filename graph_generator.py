@@ -8,7 +8,6 @@ import numpy as np
 import osmnx as ox
 from tqdm import tqdm
 
-import communities_resolver
 from common import GraphLayer
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.cluster import DBSCAN, MeanShift

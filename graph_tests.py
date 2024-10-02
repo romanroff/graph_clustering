@@ -147,13 +147,13 @@ def test_graph(graph: nx.Graph, name: str, city_id: str, points: list[tuple[int,
 
     if resolutions is None:
         resolutions = []
-        resolutions += [1+i / 500 for i in range(1, 500, 1)]
-        # resolutions += [i for i in range(2, 10, 1)]
-        # resolutions += [i for i in range(10, 50, 2)]
-        # resolutions += [i for i in range(50, 100, 5)]
-        # resolutions += [i for i in range(100, 500, 10)]
-        # resolutions += [i for i in range(500, 1000, 50)]
-        # resolutions += [i for i in range(1000, 5000, 200)]
+        # resolutions += [1+i / 500 for i in range(1, 500, 1)]
+        resolutions += [i for i in range(2, 10, 1)]
+        resolutions += [i for i in range(10, 50, 2)]
+        resolutions += [i for i in range(50, 100, 5)]
+        resolutions += [i for i in range(100, 500, 10)]
+        resolutions += [i for i in range(500, 1000, 50)]
+        resolutions += [i for i in range(1000, 5000, 200)]
 
     if points is None:
         N: int = 1000
@@ -193,7 +193,6 @@ def test_graph(graph: nx.Graph, name: str, city_id: str, points: list[tuple[int,
                 clustering,
                 min_cluster_size=min(max(int(r / 5000 * len(graph.nodes)), 2), len(graph.nodes))
             ).find_communities(graph)
-
         else:
             return None
 
