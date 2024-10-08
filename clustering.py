@@ -116,7 +116,7 @@ class LouvainKMeansCommunitiesResolver(CommunitiesResolver):
         self.__louvain = LouvainCommunitiesResolver(resolution=resolution, weight=weight)
 
     def _resolver(self, g: nx.Graph) -> Community:
-        communities = self.__louvain.find_communities(g)
+        communities = self.__louvain.fincommunitiesd_communities(g)
 
         cls2center = {}
         cls2diam = {}
