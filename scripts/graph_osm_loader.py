@@ -4,11 +4,13 @@ import pickle
 import networkx as nx
 import osmnx as ox
 
+from scripts import utils
+
 
 # load graph
-def get_graph(city_id: str = 'R2555133', path='./') -> nx.Graph:
+def get_graph(city_id: str = 'R2555133') -> nx.Graph:
     id_graph = city_id
-    path = os.path.join(path, f'{id_graph}.pickle')
+    path = utils.get_path('graphs', f'{id_graph}.pickle')
     if os.path.exists(path):
         with open(path, 'rb') as fp:
             g: nx.Graph = pickle.load(fp)
