@@ -18,6 +18,7 @@ def validate_cms(H: nx.Graph, communities: list[set[int]] | tuple[set[int]]) -> 
     for i, ids in enumerate(cls):
         for j in ids:
             H.nodes()[j]['cluster'] = i
+    # assert nx.community.is_partition(H,cls)
     return cls
 
 def get_node_for_initial_graph_v2(graph: nx.Graph):
