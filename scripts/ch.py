@@ -125,13 +125,13 @@ def ch_pfa(
     # todo optimize для мск 6.5 и 6.7 с и без поиска пути
     path = []
     e = union_node
-    while seens[0][e][1]:
+    while seens[0][e][1] is not None:
         e1 = seens[0][e][1]
         p = get_path(e1, e, edges_to_nodes)
         path = p + path
         e = e1
     e = union_node
-    while seens[1][e][1]:
+    while seens[1][e][1] is not None:
         e1 = seens[1][e][1]
         p = get_path(e, e1, edges_to_nodes)
         path += p
