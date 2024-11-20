@@ -122,7 +122,6 @@ def ch_pfa(
                         union_node = u
         if min(heads) > union_dst:
             break
-    # todo optimize для мск 6.5 и 6.7 с и без поиска пути
     path = []
     e = union_node
     while seens[0][e][1] is not None:

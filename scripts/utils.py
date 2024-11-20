@@ -31,9 +31,9 @@ def get_node_for_initial_graph_v2(graph: nx.Graph):
 
 
 def get_path(folder: str, name: str):
-    if not os.path.exists('./data'):
-        os.mkdir('./data')
-    path = os.path.join('./data', folder)
+    if not os.path.exists('../data'):
+        os.mkdir('../data')
+    path = os.path.join('../data', folder)
     if not os.path.exists(path):
         os.mkdir(path)
     return os.path.join(path, name)

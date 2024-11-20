@@ -3,15 +3,15 @@ from tqdm import tqdm
 
 
 # cluster to neighboring clusters
-def get_cls2n(graph: nx.Graph) -> dict[int: set[int]]:
+def get_cls2n(graph: nx.Graph, name='cluster') -> dict[int: set[int]]:
     _cls2n = {}
     for u, du in graph.nodes(data=True):
         for v in graph[u]:
             dv = graph.nodes()[v]
-            if dv['cluster'] == du['cluster']:
+            if dv[name] == du[name]:
                 continue
-            c1 = dv['cluster']
-            c2 = du['cluster']
+            c1 = dv[name]
+            c2 = du[name]
             if not (c1 in _cls2n):
                 _cls2n[c1] = set()
             if not (c2 in _cls2n):
@@ -22,13 +22,13 @@ def get_cls2n(graph: nx.Graph) -> dict[int: set[int]]:
 
 
 # cluster then yts point that are connected with neighboring clusters
-def get_cls2hubs(graph: nx.Graph) -> dict[int: set[int]]:
+def get_cls2hubs(graph: nx.Graph, name='cluster') -> dict[int: set[int]]:
     _cls2hubs = {}
     for u, du in graph.nodes(data=True):
         for v in graph[u]:
             dv = graph.nodes()[v]
-            c1 = du['cluster']
-            c2 = dv['cluster']
+            c1 = du[name]
+            c2 = dv[name]
             if c1 == c2:
                 continue
             if not (c1 in _cls2hubs):
@@ -45,17 +45,19 @@ def build_center_graph(
         graph: nx.Graph,
         communities: list[set[int]],
         cls2n: dict[int: set[int]],
-        log: bool = False
+        log: bool = False,
+        name: str = 'cluster'
 ) -> tuple[nx.Graph, dict[int, int]]:
     x_graph = nx.Graph()
     cls2c = {}
-    iter = tqdm(enumerate(communities), total=len(communities), desc='find centroids') if log else enumerate(communities)
+    iter = tqdm(enumerate(communities), total=len(communities), desc='find centroids') if log else enumerate(
+        communities)
     for cls, _ in iter:
         gc = extract_cluster_list_subgraph(graph, [cls], communities)
         min_node = nx.barycenter(gc, weight='length')[0]
         du = graph.nodes()[min_node]
-        x_graph.add_node(graph.nodes()[min_node]['cluster'], **du)
-        cls2c[graph.nodes()[min_node]['cluster']] = min_node
+        x_graph.add_node(graph.nodes()[min_node][name], **du)
+        cls2c[graph.nodes()[min_node][name]] = min_node
 
     if len(x_graph.nodes) == 1:
         return x_graph, cls2c
@@ -67,7 +69,7 @@ def build_center_graph(
     return x_graph, cls2c
 
 
-#extract subgraph by clusters
+# extract subgraph by clusters
 def extract_cluster_list_subgraph(graph: nx.Graph, cluster_number: list[int] | set[int], communities=None) -> nx.Graph:
     if communities:
         return graph.subgraph(_iter_cms(cluster_number, communities))
@@ -75,7 +77,8 @@ def extract_cluster_list_subgraph(graph: nx.Graph, cluster_number: list[int] | s
         nodes_to_keep = [node for node, data in graph.nodes(data=True) if data['cluster'] in cluster_number]
     return graph.subgraph(nodes_to_keep)
 
-def _iter_cms(cluster_number: list[int] | set[int], communities: list[set[int]]| tuple[set[int]]):
+
+def _iter_cms(cluster_number: list[int] | set[int], communities: list[set[int]] | tuple[set[int]]):
     for cls in cluster_number:
         for u in communities[cls]:
             yield u
