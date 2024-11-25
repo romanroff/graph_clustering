@@ -8,15 +8,21 @@ from scripts import utils
 
 
 # load graph
-def get_graph(city_id: str = 'R2555133') -> nx.Graph:
+def get_graph(city_id: str = 'R2555133', dir = False) -> nx.Graph | nx.DiGraph:
     id_graph = city_id
-    path = utils.get_path('graphs', f'{id_graph}.pickle')
+    name = f'{id_graph}.pickle' if not dir else f'{id_graph}_dit.pickle'
+    path = utils.get_path('graphs', name)
     if os.path.exists(path):
-        with open(path, 'rb') as fp:
-            g: nx.Graph = pickle.load(fp)
-            fp.close()
+        if dir:
+            with open(path, 'rb') as fp:
+                g: nx.DiGraph = pickle.load(fp)
+                fp.close()
+        else:
+            with open(path, 'rb') as fp:
+                g: nx.Graph = pickle.load(fp)
+                fp.close()
     else:
-        g = _get_gr(id_graph)
+        g = _get_gr(id_graph, dir)
         with open(path, 'wb') as fp:
             pickle.dump(g, fp)
             fp.close()
@@ -24,22 +30,24 @@ def get_graph(city_id: str = 'R2555133') -> nx.Graph:
     return g
 
 
-def _get_gr(city_id):
+def _get_gr(city_id, dir):
     gdf = ox.geocode_to_gdf(city_id, by_osmid=True)
     polygon_boundary = gdf.unary_union
     graph = ox.graph_from_polygon(polygon_boundary,
                                   network_type='drive',
                                   simplify=True)
-    G = nx.Graph(graph)
-    H = nx.Graph()
+    if dir:
+        H = nx.DiGraph()
+    else:
+        H = nx.Graph()
     # Добавляем рёбра в новый граф, копируя только веса
-    for u, d in G.nodes(data=True):
+    for u, d in graph.nodes(data=True):
         H.add_node(u, x=d['x'], y=d['y'])
-    for u, v, d in G.edges(data=True):
+    for u, v, d in graph.edges(data=True):
         if u == v:
             continue
         H.add_edge(u, v, length=d['length'])
-    del city_id, gdf, polygon_boundary, graph, G
+    del city_id, gdf, polygon_boundary, graph
     return H
 
 

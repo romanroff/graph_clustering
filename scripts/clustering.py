@@ -5,6 +5,16 @@ from typing import NewType as _Nt, Union as _Union
 import networkx as _nx
 import logging as log
 from tqdm import trange as _trange
+import numpy as np
+import networkx as nx
+import igraph as ig
+
+from . import utils
+from tqdm import tqdm
+
+from sklearn.cluster import HDBSCAN, KMeans
+from gudhi.clustering.tomato import Tomato
+import leidenalg as la
 
 __version__ = "1.0"
 
@@ -105,3 +115,20 @@ def resolve_k_means_communities(g: _nx.Graph,
             communities[c].add(u)
         communities = validate_cms(g, communities, cluster_name=cluster_name)
     return communities
+def leiden(H: nx.Graph, **kwargs) -> list[set[int]]:
+    '''
+    Clustering by leiden algorithm - a modification of louvain
+    '''
+    # Leiden works with igraph framework
+    G = ig.Graph.from_networkx(H)
+    # Get clustering
+    partition = la.find_partition(G, **kwargs)
+    # Collect corresponding nodes
+    communities = []
+    for community in partition:
+        node_set = set()
+        for v in community:
+            node_set.add(G.vs[v]['_nx_name'])
+        communities.append(node_set)
+
+    return utils.validate_cms(H, communities)

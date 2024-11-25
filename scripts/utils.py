@@ -13,9 +13,12 @@ def get_opt_cluster_count(nodes: int) -> int:
 
 def validate_cms(H: nx.Graph, communities: list[set[int]] | tuple[set[int]]) -> list[set[int]]:
     cls = []
-    for i, c in enumerate(communities):
-        for n in nx.connected_components(H.subgraph(c)):
-            cls.append(n)
+    if not H.is_directed():
+        for i, c in enumerate(communities):
+            for n in nx.connected_components(H.subgraph(c)):
+                cls.append(n)
+    else:
+        cls = communities
     for i, ids in enumerate(cls):
         for j in ids:
             H.nodes()[j]['cluster'] = i
